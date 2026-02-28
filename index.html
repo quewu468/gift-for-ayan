@@ -30,6 +30,12 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .rotate-in { animation: rotateIn 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes rotateIn {
+            from { opacity: 0; transform: rotate(-20deg) scale(0.8); }
+            to { opacity: 1; transform: rotate(0deg) scale(1); }
+        }
+
         .record-spin { animation: spin 4s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -56,6 +62,9 @@
             from { transform: scale(1); }
             to { transform: scale(1.1); }
         }
+        
+        .custom-scroll::-webkit-scrollbar { width: 2px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--accent); }
     </style>
 </head>
 <body>
@@ -71,7 +80,8 @@
             { type: "choice", category: "相处时刻", text: "笨笨狗廖惹你生气时，哪种道歉最有效？", options: [{label:"哼唧贴贴", v:"撒娇", c:"E1"}, {label:"美食投喂", v:"务实", c:"E2"}, {label:"真诚反省", v:"态度", c:"E3"}] },
             { type: "choice", category: "生活形态", text: "理想的午后状态是？", options: [{label:"窝在沙发看电影", v:"静态", c:"L1"}, {label:"去街角探店拍照", v:"动态", c:"L2"}, {label:"在阳光下睡午觉", v:"治愈", c:"L3"}] },
             
-            { type: "special_frog", category: "中场休息", text: "呱！呱！呱！呱！" },
+            // 第5题后的特殊旋转页面
+            { type: "special_rotate", category: "甜蜜瞬间", text: "捕捉到一只正在旋转进场的阿砚！" },
             
             { type: "choice", category: "饰品风格", text: "更喜欢哪种设计感的饰品？", options: [{label:"极简线条", v:"现代", c:"D1"}, {label:"繁复巴洛克", v:"华丽", c:"D2"}, {label:"手工感小众", v:"文艺", c:"D3"}] },
             { type: "choice", category: "智商互动", text: "你觉得笨笨狗阿廖和花枝鼠谁更聪明？", options: [{label:"花枝鼠（无情）", v:"扎心", c:"E4"}, {label:"笨笨狗（勉强）", v:"鼓励", c:"E5"}, {label:"金丝熊最聪明！", v:"地位", c:"E6"}] },
@@ -86,10 +96,14 @@
             { type: "choice", category: "睡眠习惯", text: "睡觉时更依赖？", options: [{label:"软绵绵的大枕头", v:"支撑", c:"H1"}, {label:"沉甸甸的厚被子", v:"安全感", c:"H2"}, {label:"抱着笨笨狗（或者玩偶）", v:"情感", c:"H3"}] },
             { type: "choice", category: "色彩偏好", text: "如果给心情涂颜色，今天是？", options: [{label:"温柔的鹅黄", v:"愉悦", c:"K1"}, {label:"静谧的湖蓝", v:"平和", c:"K2"}, {label:"热情的橘红", v:"期待", c:"K3"}] },
             { type: "choice", category: "仪式感", text: "你觉得最有仪式感的小事是？", options: [{label:"出门前的香水喷雾", v:"气味", c:"Y1"}, {label:"睡前的一杯热牛奶", v:"触觉", c:"Y2"}, {label:"互道晚安的亲亲", v:"情感", c:"Y3"}] },
+            
+            // 青蛙调整到靠近结尾，匹配 BGM 高潮
+            { type: "special_frog", category: "气氛顶点", text: "警告！一只蹦迪青蛙正在试图占领问卷！" },
+            
             { type: "choice", category: "首饰部位", text: "如果你只能戴一件饰品，会选？", options: [{label:"点亮面部的耳饰", v:"耳部", c:"P1"}, {label:"修饰线条的项链", v:"颈部", c:"P2"}, {label:"举手投足间的戒指", v:"手部", c:"P3"}] },
             { type: "choice", category: "礼物雷区", text: "绝对不希望看到的包装方式？", options: [{label:"五彩斑斓的发光礼盒", v:"避雷1", c:"T1"}, {label:"塞满拉菲草的巨大盒子", v:"避雷2", c:"T2"}, {label:"透明简陋的塑料袋", v:"避雷3", c:"T3"}] },
             { type: "choice", category: "未来期待", text: "下个假期最想去？", options: [{label:"看海吹风", v:"浪漫", c:"Z1"}, {label:"深山吸氧", v:"避世", c:"Z2"}, {label:"城市漫游", v:"繁华", c:"Z3"}] },
-            { type: "choice", category: "最终告白", text: "最后一个问题：笨笨狗阿廖爱你吗？", options: [{label:"超爱！全世界最爱！", v:"满分", c:"LOVE1"}, {label:"敢不爱？家暴哥警告", v:"威慑", c:"LOVE2"}] }
+            { type: "choice", category: "最终告白", text: "最后一个问题：笨笨狗阿廖爱你吗？", options: [{label:"超爱！全世界最爱！", v:"满分", c:"LOVE1"}, {label:"敢不爱？金丝熊警告", v:"威慑", c:"LOVE2"}] }
         ];
 
         function App() {
@@ -121,11 +135,11 @@
                     
                     {step === 'welcome' && (
                         <div className="flex-1 flex flex-col justify-center items-center text-center fade-up">
-                            <span className="serif-italic text-accent tracking-[0.3em] text-[10px] mb-6 uppercase">Special Investigation</span>
-                            <h1 className="text-4xl font-bold mb-8 leading-tight tracking-tight text-[#333]">阿砚专属<br/>礼物心意研究所 </h1>
+                            <span className="serif-italic text-accent tracking-[0.3em] text-[10px] mb-6 uppercase">Private Laboratory v3.0</span>
+                            <h1 className="text-4xl font-bold mb-8 leading-tight tracking-tight text-[#333]">阿砚专属<br/>礼物心意研究所</h1>
                             <div className="w-12 h-[1px] bg-accent mb-8"></div>
                             <p className="text-gray-400 leading-relaxed max-w-[280px] mb-12 text-xs font-light">
-                                “点击开始你将会浪费你人生中的五分钟！。”
+                                “为了配合那首曲子的节奏，请慢慢探索阿廖的小心思。”
                             </p>
                             <button onClick={handleStart} className="px-16 py-5 border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-500 text-[10px] font-bold tracking-[0.2em]">
                                 ENTER THE LAB
@@ -134,7 +148,7 @@
                     )}
 
                     {step === 'quiz' && (
-                        <div className="flex-1 flex flex-col fade-up">
+                        <div className="flex-1 flex flex-col fade-up" key={currentIdx}>
                             <div className="mb-12">
                                 <div className="flex justify-between items-end mb-4">
                                     <span className="serif-italic text-2xl text-accent opacity-50">{currentIdx + 1} / {questions.length}</span>
@@ -166,22 +180,37 @@
                                     </>
                                 )}
 
+                                {questions[currentIdx].type === "special_rotate" && (
+                                    <div className="text-center py-10 flex flex-col items-center rotate-in">
+                                        <h2 className="text-xl font-bold mb-8 text-[#333]">{questions[currentIdx].text}</h2>
+                                        <div className="w-64 h-80 bg-white p-3 shadow-2xl border-4 border-white transform -rotate-3 mb-10 overflow-hidden">
+                                            <img src="surprise.png" alt="旋转进场图" className="w-full h-full object-cover" onError={(e) => {e.target.src='https://via.placeholder.com/200x300?text=Wait+for+surprise.png'}} />
+                                        </div>
+                                        <button onClick={() => nextStep()} className="px-10 py-3 bg-accent text-white text-[10px] font-bold tracking-widest hover:shadow-lg transition-shadow">
+                                            继续探索 →
+                                        </button>
+                                    </div>
+                                )}
+
                                 {questions[currentIdx].type === "special_frog" && (
                                     <div className="text-center py-10 flex flex-col items-center">
                                         <h2 className="text-xl font-bold mb-6 text-[#333]">{questions[currentIdx].text}</h2>
-                                        <img src="frog.png" alt="青蛙" className="w-32 h-32 mb-6 gua-animation opacity-80" onError={(e) => e.target.style.display='none'} />
-                                        <div className="text-accent font-bold text-2xl mb-10 tracking-widest gua-animation">呱！呱！呱！</div>
-                                        <button onClick={() => nextStep()} className="text-[10px] border-b border-accent pb-1 text-accent tracking-widest">路过完了，继续测试</button>
+                                        <div className="relative mb-8">
+                                            <img src="frog.png" alt="青蛙" className="w-40 h-40 gua-animation opacity-90" onError={(e) => e.target.style.display='none'} />
+                                            <div className="absolute -top-4 -right-4 bg-white px-3 py-1 text-[10px] border border-accent text-accent font-bold rotate-12">GUAAA!</div>
+                                        </div>
+                                        <div className="text-accent font-black text-3xl mb-12 tracking-[0.5em] gua-animation uppercase">蹦 迪 中</div>
+                                        <button onClick={() => nextStep()} className="text-[10px] border-b border-accent pb-1 text-accent tracking-widest font-bold">欣赏完毕，进入终点</button>
                                     </div>
                                 )}
 
                                 {questions[currentIdx].type === "special_dog" && (
                                     <div className="text-center py-10 flex flex-col items-center">
                                         <h2 className="text-xl font-bold mb-6 text-[#333]">{questions[currentIdx].text}</h2>
-                                        <div className="w-48 h-48 bg-white p-2 border border-accent/10 shadow-sm mb-8">
+                                        <div className="w-56 h-56 bg-white p-2 border border-accent/10 shadow-sm mb-10 rounded-full overflow-hidden">
                                             <img src="dog.png" alt="小狗卖萌" className="w-full h-full object-cover" />
                                         </div>
-                                        <button onClick={() => nextStep()} className="text-[10px] border-b border-accent pb-1 text-accent tracking-widest">被萌到了，继续</button>
+                                        <button onClick={() => nextStep()} className="text-[10px] border-b border-accent pb-1 text-accent tracking-widest">被萌坏了，继续</button>
                                     </div>
                                 )}
                             </div>
@@ -190,29 +219,34 @@
 
                     {step === 'result' && (
                         <div className="flex-1 flex flex-col justify-center items-center text-center fade-up pt-10">
-                            <div className="w-16 h-16 bg-accent rounded-full mb-8 flex items-center justify-center text-white text-2xl">❤</div>
-                            <h2 className="text-2xl font-bold mb-4 tracking-tight">实验报告已完成</h2>
+                            <div className="w-16 h-16 bg-accent rounded-full mb-8 flex items-center justify-center text-white text-2xl shadow-xl">❤</div>
+                            <h2 className="text-2xl font-bold mb-4 tracking-tight">阿砚的礼物蓝图已生成</h2>
                             <p className="text-gray-400 text-[10px] mb-10 leading-loose">
-                                20个数据点已归档。笨笨狗阿廖将根据此蓝图，<br/>在未来的某个时刻，为你亲手开启惊喜。
+                                所有的偏好、彩蛋和“呱呱呱”都已归档完毕。<br/>
+                                笨笨狗廖已经锁定了你的心动信号。
                             </p>
                             
-                            <div className="w-full bg-white border border-gray-100 p-6 mb-8 text-left h-64 overflow-y-auto custom-scroll shadow-sm">
-                                <div className="text-[10px] font-bold text-accent mb-4 tracking-widest uppercase border-b pb-2">Data Logs</div>
+                            <div className="w-full bg-white border border-gray-100 p-6 mb-8 text-left h-72 overflow-y-auto custom-scroll shadow-inner">
+                                <div className="text-[10px] font-bold text-accent mb-4 tracking-widest uppercase border-b pb-2 flex justify-between">
+                                    <span>Archive Logs</span>
+                                    <span>Total: 20 Items</span>
+                                </div>
                                 {answers.map((ans, i) => (
-                                    <div key={i} className="text-[9px] mb-3 flex justify-between border-b border-gray-50 pb-2">
+                                    <div key={i} className="text-[9px] mb-3 flex justify-between border-b border-gray-50 pb-2 hover:bg-gray-50 transition-colors">
                                         <span className="text-gray-300 w-8">#{i+1}</span>
                                         <span className="text-gray-500 flex-1 px-4">{ans.q}</span>
-                                        <span className="text-accent font-bold">{ans.a}</span>
+                                        <span className="text-accent font-bold uppercase">{ans.code}</span>
                                     </div>
                                 ))}
                             </div>
 
                             <button onClick={() => {
                                 const text = answers.map((a,i)=>`${i+1}.[${a.code}]${a.a}`).join('\n');
-                                navigator.clipboard.writeText(`阿砚的20道心愿清单：\n${text}\n--笨笨狗阿廖收--`).then(()=>alert("心愿报告已复制，快发给笨笨狗吧！"));
-                            }} className="w-full bg-[#333] text-white py-5 font-bold text-[10px] tracking-[0.2em] hover:bg-accent transition-colors">
-                                点击复制 20 项心愿报告
+                                navigator.clipboard.writeText(`阿砚的22项实验报告（含彩蛋）：\n${text}\n--笨笨狗阿廖收--`).then(()=>alert("心愿报告已复制，快发给阿廖吧！"));
+                            }} className="w-full bg-[#333] text-white py-5 font-bold text-[10px] tracking-[0.2em] hover:bg-accent transition-all shadow-lg active:scale-95">
+                                点击复制 完整实验报告
                             </button>
+                            <p className="mt-4 text-[9px] text-gray-300">复制后粘贴给微信里的笨笨狗</p>
                         </div>
                     )}
                 </div>
@@ -224,4 +258,3 @@
     </script>
 </body>
 </html>
-
