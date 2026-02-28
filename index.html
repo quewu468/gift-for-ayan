@@ -3,74 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>给阿砚的专属小问卷 🐾</title>
+    <title>The Lab of Love | 给阿砚的礼物研究所</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;1,700&family=Noto+Serif+SC:wght@300;700&display=swap" rel="stylesheet">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
-        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
-        .font-cute { font-family: 'ZCOOL+KuaiLe', cursive; }
-        .dog-bounce { animation: bounce 2s infinite; }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        :root {
+            --accent: #D4AF37; /* 高级金 */
+            --bg: #FDFBF8;    /* 奶茶米 */
+            --text: #4A4A4A;
         }
-        .record-spin { animation: record-rotate 4s linear infinite; }
-        @keyframes record-rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        body { 
+            font-family: 'Noto Serif SC', serif; 
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
         }
-        .bg-soft {
-            background: linear-gradient(135deg, #FFF9F0 0%, #FFF0F0 100%);
+        .serif-italic { font-family: 'Bodoni Moda', serif; font-style: italic; }
+        
+        .line-deco {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent), transparent);
+            width: 100%;
+            margin: 2rem 0;
         }
+
+        .fade-up { animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .record-spin { animation: spin 4s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .option-card {
+            transition: all 0.3s ease;
+            border: 1px solid #EEE;
+        }
+        .option-card:hover {
+            border-color: var(--accent);
+            background-color: #FAF6F0;
+            padding-left: 2rem;
+        }
+        
+        .progress-bar {
+            height: 2px;
+            background: #E5E5E5;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* 专门为阿砚设计的可爱微交互 */
+        .dog-ear { transition: transform 0.3s; }
+        .group:hover .dog-ear { transform: rotate(15deg); }
     </style>
 </head>
-<body class="bg-soft">
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useRef } = React;
+        const { useState, useEffect, useRef } = React;
 
-        const BrainIcon = () => (
-            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.54Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.54Z"></path></svg>
-        );
-
-        const MusicIcon = ({ playing }) => (
-            <svg className={playing ? "record-spin" : ""} viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+        const MusicIcon = ({ isPlaying }) => (
+            <div className={`relative ${isPlaying ? 'record-spin' : ''}`}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+            </div>
         );
 
         const questions = [
-            { id: 1, text: "如果阿廖突然中了大奖，说要带你去吃好吃的犒劳一下，你最想去哪里？", options: [{label:"很有名的大牌餐厅",value:"A"}, {label:"藏在巷子里的小众私房菜",value:"B"}, {label:"在家点外卖看电影",value:"C"}] },
-            { id: 2, text: "关于智商的话题，阿砚宝宝觉得哪种情况更让你开心？", options: [{label:"实用的黑科技",value:"A"}, {label:"萌到心颤的公仔",value:"B"}, {label:"阿廖亲手做的笨笨礼物",value:"C"}] },
-            { id: 3, text: "阿廖要送你一个“随身携带”的东西，你更希望是：", options: [{label:"质感十足的大牌配饰",value:"A"}, {label:"独一无二的设计师作品",value:"B"}, {label:"丑萌的小狗挂件",value:"C"}] }
+            {
+                category: "审美基调 | Aesthetic",
+                text: "如果生活是一场电影，阿砚更倾向于哪种色彩基调？",
+                options: [
+                    { label: "莫兰迪色系：低饱和度的温柔与疏离", value: "高级极简", code: "A1" },
+                    { label: "复古暖调：像秋天落叶和午后红茶", value: "复古温馨", code: "A2" },
+                    { label: "马卡龙色彩：跳跃的、可爱的、充满生机的", value: "甜美活力", code: "A3" }
+                ]
+            },
+            {
+                category: "感官偏好 | Senses",
+                text: "当你闭上眼，哪种气息最能让你感到“被治愈”？",
+                options: [
+                    { label: "清冷草木：雨后的森林与泥土气息", value: "木质调", code: "S1" },
+                    { label: "软糯奶香：像刚洗过的被单和爽身粉", value: "皂感奶香", code: "S2" },
+                    { label: "清甜果香：熟透的桃子或酸涩的柑橘", value: "果香调", code: "S3" }
+                ]
+            },
+            {
+                category: "智商博弈 | Egg (卖萌)",
+                text: "（彩蛋）关于智商，阿砚金丝熊对笨笨狗廖的评价是？",
+                options: [
+                    { label: "“宝宝狗智商低没关系，我有脑子就行”", value: "宠溺型", code: "E1" },
+                    { label: "“哎，这只狗没救了，只能亲亲续命了”", value: "无奈型", code: "E2" },
+                    { label: "“其实他是在扮猪吃老虎，坏得很！”", value: "警惕型", code: "E3" }
+                ]
+            },
+            {
+                category: "饰品细节 | Material",
+                text: "如果是一件贴身的小物件，阿砚更偏好哪种质感？",
+                options: [
+                    { label: "冷感的银/白金：清冷且有力量", value: "冷色金属", code: "M1" },
+                    { label: "温润的珍珠/玫瑰金：柔和且高级", value: "暖色质感", code: "M2" },
+                    { label: "天然的皮革/丝绒：柔软有温度", value: "软质材料", code: "M3" }
+                ]
+            },
+            {
+                category: "礼物形态 | Form",
+                text: "你理想中的“惊喜包裹”拆开后应该是？",
+                options: [
+                    { label: "很有分量的“大家伙”，非常有存在感", value: "厚重感", code: "F1" },
+                    { label: "精致玲珑的“小可爱”，可以随身携带", value: "便携感", code: "F2" },
+                    { label: "一整盒散落的“小确幸”，每样都很有趣", value: "丰富感", code: "F3" }
+                ]
+            },
+            {
+                category: "相处模式 | Egg (卖萌)",
+                text: "（彩蛋）笨笨狗做错事后，哪种道歉姿势最容易得到阿砚的原谅？",
+                options: [
+                    { label: "像修勾一样哼哼唧唧地蹭蹭贴贴", value: "肢体撒娇", code: "E4" },
+                    { label: "立刻奉上精美的小零食（投喂大法）", value: "食物诱惑", code: "E5" },
+                    { label: "一脸无辜地看着你，直到你忍不住笑场", value: "颜值攻势", code: "E6" }
+                ]
+            },
+            {
+                category: "生活哲学 | Utility",
+                text: "关于“礼物”的定义，你更看重哪一个层面？",
+                options: [
+                    { label: "精致的仪式感：哪怕不常用，但看一眼就很幸福", value: "情感价值", code: "U1" },
+                    { label: "长久的陪伴感：每天都能用到，像阿廖在身边", value: "实用主义", code: "U2" },
+                    { label: "拆盲盒的惊喜：哪怕丑萌奇怪，也要独一无二", value: "独特性", code: "U3" }
+                ]
+            },
+            {
+                category: "雷区警告 | Taboo",
+                text: "最后，绝对不能触碰的“直男审美”底线是？",
+                options: [
+                    { label: "没有任何实用价值的“假花/土味礼盒”", value: "避开土味", code: "T1" },
+                    { label: "自以为幽默但其实很尴尬的奇怪挂件", value: "避开尬幽默", code: "T2" },
+                    { label: "虽然是大牌但丑到难以忍受的单品", value: "避开盲目大牌", code: "T3" }
+                ]
+            }
         ];
 
         function App() {
-            const [step, setStep] = useState('music');
+            const [step, setStep] = useState('welcome');
             const [currentIdx, setCurrentIdx] = useState(0);
+            const [answers, setAnswers] = useState([]);
             const [isPlaying, setIsPlaying] = useState(false);
-            
-            // 重要：这里填写你上传到 GitHub 的音乐文件名
-            const audioUrl = "bgm.mp3"; 
-            
             const audioRef = useRef(null);
 
-            const startEverything = () => {
+            const handleStart = () => {
+                setStep('quiz');
                 if (audioRef.current) {
-                    audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.log("播放被阻拦"));
+                    audioRef.current.play().then(() => {
+                        setIsPlaying(true);
+                    }).catch(e => console.log("Music play blocked", e));
                 }
-                setStep('start');
             };
 
             const toggleMusic = () => {
-                if (isPlaying) { audioRef.current.pause(); setIsPlaying(false); }
-                else { audioRef.current.play(); setIsPlaying(true); }
+                if (isPlaying) {
+                    audioRef.current.pause();
+                    setIsPlaying(false);
+                } else {
+                    audioRef.current.play();
+                    setIsPlaying(true);
+                }
             };
 
-            const handleNext = () => {
+            const handleAnswer = (option) => {
+                const newAnswers = [...answers, { q: questions[currentIdx].text, a: option.label, value: option.value, code: option.code }];
+                setAnswers(newAnswers);
+                
                 if (currentIdx < questions.length - 1) {
                     setCurrentIdx(currentIdx + 1);
                 } else {
@@ -78,57 +193,140 @@
                 }
             };
 
+            const copyResults = () => {
+                const summary = answers.map((ans, i) => `${i+1}. [${ans.code}] ${ans.a}`).join('\n');
+                const text = `阿砚的礼物调查报告：\n------------------\n${summary}\n------------------\n笨笨狗阿廖，请按此指引准备惊喜吧！🐾`;
+                
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert("报告已复制！快去发给笨笨狗吧~");
+                } catch (err) {
+                    alert("复制失败，请截图。");
+                }
+                document.body.removeChild(textArea);
+            };
+
             return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-6 relative text-center">
-                    <audio ref={audioRef} src={audioUrl} loop />
+                <div className="max-w-screen-md mx-auto min-h-screen flex flex-col px-8 py-12 relative bg-[#FDFBF8]">
+                    {/* 隐藏的音频元素 */}
+                    <audio ref={audioRef} src="bgm.mp3" loop preload="auto" />
                     
-                    {step !== 'music' && (
-                        <div className="fixed top-6 right-6 z-50">
-                            <button onClick={toggleMusic} className={`p-3 rounded-full bg-white shadow-lg border-2 ${isPlaying ? 'border-orange-400 text-orange-400' : 'border-gray-200 text-gray-400'}`}>
-                                <MusicIcon playing={isPlaying} />
-                            </button>
-                        </div>
+                    {/* 音乐悬浮按钮 */}
+                    {step !== 'welcome' && (
+                        <button 
+                            onClick={toggleMusic}
+                            className={`fixed top-8 right-8 z-50 p-3 rounded-full border border-accent/20 bg-white/50 backdrop-blur-sm transition-all ${isPlaying ? 'text-accent' : 'text-gray-300'}`}
+                        >
+                            <MusicIcon isPlaying={isPlaying} />
+                        </button>
                     )}
 
-                    {step === 'music' && (
-                        <div className="bg-white p-10 rounded-[50px] shadow-2xl max-w-sm w-full border-2 border-orange-100">
-                            <div className="text-6xl mb-6">🎧</div>
-                            <h2 className="text-xl font-cute text-orange-600 mb-2">阿砚专属音乐盒</h2>
-                            <p className="text-gray-400 text-xs mb-8 italic">“点击开启，解锁阿廖的心意”</p>
-                            <button onClick={startEverything} className="w-full bg-orange-400 text-white font-bold py-4 rounded-full shadow-lg hover:scale-105 transition-transform">
-                                开启并进入 🐾
+                    {step === 'welcome' && (
+                        <div className="flex-1 flex flex-col justify-center items-center text-center fade-up">
+                            <span className="serif-italic text-accent tracking-[0.3em] text-[10px] mb-6 uppercase">Private Laboratory</span>
+                            <h1 className="text-4xl md:text-5xl font-bold mb-8 leading-tight tracking-tight">阿砚专属<br/>礼物心意研究所</h1>
+                            <div className="line-deco"></div>
+                            <p className="text-gray-400 leading-relaxed max-w-[280px] mb-12 text-xs font-light">
+                                “通过8个维度的感官测试，为笨笨狗阿廖提供一份精准的浪漫避雷指南。”
+                            </p>
+                            <button 
+                                onClick={handleStart}
+                                className="group relative overflow-hidden border border-accent text-accent px-16 py-5 transition-all duration-500 hover:text-white"
+                            >
+                                <span className="relative z-10 tracking-[0.2em] text-[10px] uppercase font-bold">开启研究所 (BGM ON)</span>
+                                <div className="absolute top-0 left-0 w-0 h-full bg-accent transition-all duration-500 group-hover:w-full"></div>
                             </button>
-                        </div>
-                    )}
-
-                    {step === 'start' && (
-                        <div className="bg-white p-8 rounded-[40px] shadow-2xl max-w-sm w-full border-t-8 border-orange-300 relative animate-in fade-in">
-                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 text-6xl dog-bounce">🐶</div>
-                            <h1 className="text-2xl font-cute text-orange-600 mt-4 mb-2">给阿砚的礼物调查</h1>
-                            <p className="text-gray-500 text-sm mb-6">帮脑回路简单的笨笨狗选出你最心动的礼物方向吧！</p>
-                            <button onClick={() => setStep('quiz')} className="w-full bg-orange-400 text-white font-bold py-4 rounded-full shadow-md">开始答题</button>
                         </div>
                     )}
 
                     {step === 'quiz' && (
-                        <div className="bg-white p-8 rounded-[40px] shadow-xl w-full max-w-sm animate-in slide-in-from-right">
-                            <div className="flex justify-center mb-4 text-orange-300"><BrainIcon /></div>
-                            <h2 className="text-lg font-bold text-gray-800 mb-8">{questions[currentIdx].text}</h2>
-                            <div className="space-y-3">
+                        <div className="flex-1 flex flex-col fade-up">
+                            <div className="mb-16">
+                                <div className="flex justify-between items-end mb-4">
+                                    <span className="serif-italic text-3xl text-accent opacity-50">0{currentIdx + 1}</span>
+                                    <span className="text-[10px] tracking-widest uppercase text-gray-300">Questionnaire In Progress</span>
+                                </div>
+                                <div className="progress-bar">
+                                    <div className="progress-fill" style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}></div>
+                                </div>
+                            </div>
+
+                            <div className="mb-12">
+                                <span className="text-accent text-[10px] font-bold tracking-[0.2em] uppercase mb-4 block opacity-80">
+                                    {questions[currentIdx].category}
+                                </span>
+                                <h2 className="text-2xl font-bold leading-snug text-[#333]">
+                                    {questions[currentIdx].text}
+                                </h2>
+                            </div>
+
+                            <div className="space-y-4">
                                 {questions[currentIdx].options.map((opt, i) => (
-                                    <button key={i} onClick={handleNext} className="w-full p-4 rounded-2xl border-2 border-orange-50 hover:border-orange-300 hover:bg-orange-50 transition-all text-gray-700 text-sm">
-                                        {opt.label}
+                                    <button 
+                                        key={i} 
+                                        onClick={() => handleAnswer(opt)}
+                                        className="option-card w-full text-left p-6 bg-white flex items-center justify-between group rounded-sm"
+                                    >
+                                        <span className="text-xs text-gray-600 group-hover:text-accent transition-colors">{opt.label}</span>
+                                        <span className="opacity-0 group-hover:opacity-100 transition-all text-accent transform translate-x-[-10px] group-hover:translate-x-0">
+                                            SELECT
+                                        </span>
                                     </button>
                                 ))}
+                            </div>
+                            
+                            <div className="mt-auto pt-16 text-center">
+                                <p className="text-[10px] text-gray-300 italic tracking-wider">
+                                    “金丝熊智商高，花枝鼠智商低，笨笨狗在努力。”
+                                </p>
                             </div>
                         </div>
                     )}
 
                     {step === 'result' && (
-                        <div className="bg-white p-10 rounded-[50px] shadow-2xl max-w-sm w-full animate-in zoom-in">
-                            <h1 className="text-2xl font-cute text-orange-600 mb-4">问卷已送达！✨</h1>
-                            <p className="text-gray-500 text-sm">阿廖已经收到信号啦，请静候惊喜！</p>
-                            <div className="mt-6 text-4xl">🐹 🐶 🐭</div>
+                        <div className="flex-1 flex flex-col justify-center items-center text-center fade-up">
+                            <div className="mb-12 relative">
+                                <div className="w-20 h-20 record-spin border border-accent/30 rounded-full flex items-center justify-center">
+                                    <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-white text-[8px] font-bold uppercase tracking-tighter">
+                                        ANALYSED
+                                    </div>
+                                </div>
+                                <div className="absolute -bottom-2 -right-2 text-2xl">🐾</div>
+                            </div>
+                            
+                            <h2 className="text-2xl font-bold mb-4 tracking-tight text-[#333]">分析报告已封存</h2>
+                            <p className="text-gray-400 text-[11px] mb-12 px-8 leading-loose">
+                                实验结果表明：阿砚是一位品味极其敏锐的金丝熊宝宝。<br/>
+                                笨笨狗阿廖已收到高优先级指令，请静候惊喜降临。
+                            </p>
+                            
+                            <div className="w-full bg-white border border-gray-100 p-8 mb-10 text-left shadow-sm">
+                                <div className="flex items-center gap-3 mb-6 border-b border-gray-50 pb-4">
+                                    <div className="text-accent text-xl">🐶</div>
+                                    <span className="font-bold text-[10px] uppercase tracking-[0.2em] text-gray-400">Laboratory Data Summary</span>
+                                </div>
+                                <div className="space-y-4">
+                                    {answers.map((ans, i) => (
+                                        <div key={i} className="text-[10px] flex justify-between items-start group">
+                                            <span className="text-gray-300 mr-4">0{i+1}</span>
+                                            <span className="text-gray-500 flex-1 leading-normal">{ans.a}</span>
+                                            <span className="text-accent font-bold ml-4 opacity-50">{ans.code}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={copyResults}
+                                className="w-full bg-[#333] text-white py-5 shadow-2xl hover:bg-accent transition-all duration-500 font-bold text-[10px] uppercase tracking-[0.3em]"
+                            >
+                                点击复制心愿报告
+                            </button>
+                            <p className="mt-6 text-[9px] text-gray-300 italic">“把这段神秘代码发给笨笨狗，他会懂的。”</p>
                         </div>
                     )}
                 </div>
