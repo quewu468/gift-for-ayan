@@ -90,7 +90,7 @@
             { type: "choice", category: "生活形态", text: "理想的午后状态是？", options: [{label:"窝在沙发看电影", c:"L1"}, {label:"去街角探店拍照", c:"L2"}, {label:"在阳光下睡午觉", c:"L3"}] },
             { type: "choice", category: "饰品风格", text: "更喜欢哪种设计感的饰品？", options: [{label:"极简线条", c:"D1"}, {label:"繁复巴洛克", c:"D2"}, {label:"手工感小众", c:"D3"}] },
             { type: "choice", category: "智商互动", text: "你觉得笨笨狗阿廖和金丝熊谁更聪明？", options: [{label:"花枝鼠（无情）", c:"E4"}, {label:"笨笨狗（勉强）", c:"E5"}, {label:"我自己最聪明！", c:"E6"}] },
-            { type: "choice", category: "季节偏好", text: "哪个季节会让你更有物欲？", options: [{label:"温暖慵懒的冬", c:"W1"}, {label:"万物复苏的春", c:"W2"}, {label:"热烈喧嚣的夏", c:"W3"}] },
+            { type: "choice", category: "季节偏好", text: "哪个季节会让你更有物欲？", options: [{label:"温暖慵懒的冬", c:"W1"}, {label:"万物复苏的春", c:"W2"}, {label:"热烈喧嚣的夏", c:"W3"}, {label:"硕果累累的秋", c:"W4"}] },
             { type: "choice", category: "情感价值", text: "你如何看待“情侣款”？", options: [{label:"必须要有，官宣必备", c:"V1"}, {label:"低调内敛，细节呼应", c:"V2"}, {label:"随缘，好看就行", c:"V3"}] },
             { 
                 type: "hybrid", 
@@ -104,15 +104,39 @@
             { type: "special_frog", category: "Gua Gua", text: "警告！一只蹦迪青蛙占领了屏幕！", sub: "正在配合BGM 59秒的高潮节奏狂欢中..." },
             
             { type: "choice", category: "实用主义", text: "收到礼物，你第一反应是看？", options: [{label:"包装的精致程度", c:"U1"}, {label:"日常是否能用到", c:"U2"}, {label:"是否是心心念念很久的", c:"U3"}] },
-            { type: "choice", category: "环境氛围", text: "最喜欢的约会环境是？", options: [{label:"有格调的西餐厅", c:"C1"}, {label:"充满生活气的夜市", c:"C2"}, {label:"空无一人的美术馆", c:"C3"}] },
+            { 
+                type: "hybrid", 
+                category: "环境氛围", 
+                text: "最喜欢的约会环境是？", 
+                options: ["有格调的西餐厅", "充满生活气的夜市", "空无一人的美术馆", "江边的长椅"],
+                placeholder: "输入更想去的秘密基地..." 
+            },
             { type: "choice", category: "睡眠习惯", text: "睡觉时更依赖？", options: [{label:"软绵绵的大枕头", c:"H1"}, {label:"沉甸甸的厚被子", c:"H2"}, {label:"抱着笨笨狗（或者玩偶）", c:"H3"}] },
-            { type: "choice", category: "色彩偏好", text: "如果给心情涂颜色，今天是？", options: [{label:"温柔的鹅黄", c:"K1"}, {label:"静谧的湖蓝", c:"K2"}, {label:"热情的橘红", c:"K3"}, {label:"神秘的浅紫", c:"K4"}] },
+            { 
+                type: "hybrid", 
+                category: "色彩偏好", 
+                text: "如果给心情涂颜色，今天是？", 
+                options: ["温柔的鹅黄", "静谧的湖蓝", "热情的橘红", "神秘的浅紫"],
+                placeholder: "描述你此刻独特的色彩..." 
+            },
             
             // ✨ 第16题：笨笨狗卖萌
             { type: "special_dog", category: "Cute Attack", text: "笨笨狗廖向你发来了卖萌光波！" },
 
-            { type: "choice", category: "仪式感", text: "你觉得最有仪式感的小事是？", options: [{label:"出门前的香水喷雾", c:"Y1"}, {label:"睡前的一杯热牛奶", c:"Y2"}, {label:"互道晚安的亲亲", c:"Y3"}] },
-            { type: "choice", category: "首饰部位", text: "如果你只能戴一件饰品，会选？", options: [{label:"耳饰", c:"P1"}, {label:"项链", c:"P2"}, {label:"戒指", c:"P3"}] },
+            { 
+                type: "hybrid", 
+                category: "仪式感", 
+                text: "你觉得最有仪式感的小事是？", 
+                options: ["出门前的香水喷雾", "睡前的一杯热牛奶", "互道晚安的亲亲", "纪念日的一封亲手信", "清晨的第一杯咖啡"],
+                placeholder: "还有哪些让你心动的小瞬间？" 
+            },
+            { 
+                type: "hybrid", 
+                category: "首饰部位", 
+                text: "如果你只能戴一件饰品，会选？", 
+                options: ["耳饰", "项链", "戒指", "手链"],
+                placeholder: "或是其他特别的装点..." 
+            },
             { type: "choice", category: "礼物雷区", text: "绝对不希望看到的包装方式？", options: [{label:"五彩斑斓的发光礼盒", c:"T1"}, {label:"塞满拉菲草的巨大盒子", c:"T2"}, {label:"透明简陋的塑料袋", c:"T3"}] },
             { 
                 type: "hybrid", 
@@ -170,11 +194,11 @@
                     
                     {step === 'welcome' && (
                         <div className="flex-1 flex flex-col justify-center items-center text-center fade-up">
-                            <span className="serif-italic text-accent tracking-[0.3em] text-[10px] mb-6 uppercase">Lab v5.5 Final Timing</span>
+                            <span className="serif-italic text-accent tracking-[0.3em] text-[10px] mb-6 uppercase">Lab v5.6 Custom Sync</span>
                             <h1 className="text-4xl font-bold mb-8 leading-tight tracking-tight text-[#333]">阿砚专属<br/>礼物心意研究所</h1>
                             <div className="w-12 h-[1px] bg-accent mb-8"></div>
                             <p className="text-gray-400 leading-relaxed max-w-[280px] mb-12 text-xs font-light italic">
-                                “有BGM记得戴上耳机哦♥”
+                                “补齐了四季与自定义的自由”
                             </p>
                             <button onClick={handleStart} className="px-16 py-5 bg-[#2D2D2D] text-white font-bold tracking-[0.2em] pulse-button rounded-sm text-[10px]">
                                 START RESEARCH
@@ -316,7 +340,7 @@
                             <div className="w-full bg-white border border-gray-100 p-6 mb-8 text-left h-72 overflow-y-auto custom-scroll shadow-inner rounded-sm">
                                 <div className="text-[10px] font-bold text-accent mb-4 tracking-widest uppercase border-b pb-2 flex justify-between">
                                     <span>Analysis Logs</span>
-                                    <span>23 Total Items</span>
+                                    <span>{answers.length} Total Items</span>
                                 </div>
                                 {answers.map((ans, i) => (
                                     <div key={i} className="text-[9px] mb-3 flex justify-between border-b border-gray-50 pb-2 hover:bg-gray-50 transition-colors">
@@ -344,4 +368,3 @@
     </script>
 </body>
 </html>
-
